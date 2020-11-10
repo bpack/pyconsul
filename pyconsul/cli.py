@@ -20,10 +20,10 @@ def setup_logger(verbosity):
 
 @click.command()
 @click.option('-v', '--verbose', count=True)
-def mirror(verbose):
+def main(verbose):
     setup_logger(verbose)
     logger = logging.getLogger('pyconsul')
     logger.debug('Logging configured')
 
 if __name__ == '__main__':
-    mirror()
+    main()

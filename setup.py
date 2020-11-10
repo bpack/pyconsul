@@ -15,7 +15,7 @@ setup(
     packages = ['pyconsul'],
     entry_points = {
         'console_scripts': [
-            'pyconsul=pyconsul.cli:mirror'
+            'pyconsul=pyconsul.cli:main'
         ]
     },
     install_requires = [

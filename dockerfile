@@ -1,4 +1,4 @@
-FROM python:3.7-slim AS base
+FROM python:3.5-slim AS base
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -10,7 +10,7 @@ RUN pip install pipenv
 RUN apt-get update && apt-get install -y --no-install-recommends
 
 COPY Pipfile .
-COPY Pipfile.lock .
+#COPY Pipfile.lock .
 RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
 
 FROM base AS runtime

@@ -10,3 +10,4 @@ python_version = "3.5"
 pytest = "*"
 
 [packages]
+click = "7.1.2"
