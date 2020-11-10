@@ -1,0 +1,7 @@
+# Ignore everything
+**
+
+# Except dependencies and source
+!Pipfile
+!Pipfile.lock
+!pyconsul/
