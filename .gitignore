@@ -1,3 +1,4 @@
 build/
+dist/
 pyconsul.egg-info
   

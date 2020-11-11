@@ -18,12 +18,29 @@ def setup_logger(verbosity):
 
     logger.addHandler(s)
 
+
 @click.command()
+@click.option('-d', '--directory', multiple=True,
+    default=['.'],
+    help='''
+        Directories to be mirrored to consul.
+    ''')
 @click.option('-v', '--verbose', count=True)
-def main(verbose):
+def main(directory, verbose):
     setup_logger(verbose)
     logger = logging.getLogger('pyconsul')
+    config = {
+        "paths": directory,
+        "verbosity": verbose
+    }
+    log_config(config, logger)
+
+
+def log_config(config, logger):
     logger.debug('Logging configured')
+    for k, v in config.items():
+        logger.debug(f"{k} = {v}")
+
 
 if __name__ == '__main__':
     main()
