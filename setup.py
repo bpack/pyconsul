@@ -19,6 +19,5 @@ setup(
         ]
     },
     install_requires = [
-        'click==7.1.2'
     ]
 )
