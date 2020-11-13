@@ -17,10 +17,14 @@ class Base(object):
         return self._config.get(name)
 
     def set_property(self, name, value):
-        return self._config.setdefault(name, value)
+        self._config[name] = value
 
 
 class PyconsulConfig(Base):
+
+    def validate(self):
+        if self._config.get('url') is None:
+            raise RuntimeError('No consul URL configured')
 
     @property
     def dryrun(self):
@@ -45,8 +49,9 @@ class PyconsulConfig(Base):
 
     @paths.setter
     def paths(self, path_list):
+        values = path_list.split(':')
         if path_list is not None:
-            self.set_property('paths', path_list)
+            self.set_property('paths', values)
 
     @property
     def url(self):
@@ -74,3 +79,11 @@ class PyconsulConfig(Base):
     def verbosity(self, value):
         if isinstance(value, int):
             self.set_property('verbosity', value)
+
+    def __str__(self):
+        s = 'PyconsulConfig:'
+        for k, v in self._config.items():
+            s += f"\n\t+ {k} = {v}" 
+
+        return s
+

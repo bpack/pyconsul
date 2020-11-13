@@ -1,9 +1,10 @@
 import argparse
 import logging
 import os
+import sys
 from .config import PyconsulConfig
 
-def parse_args():
+def parse_args(argv):
     parser = argparse.ArgumentParser()
  
     parser.add_argument('-d', '--dryrun', action='store_true')
@@ -13,7 +14,8 @@ def parse_args():
     parser.add_argument('-u', '--url', default=os.environ.get('CONSUL_URL'))
     parser.add_argument('-v', '--verbose', action='count', default=0)
 
-    args = parser.parse_args()
+    print("In parse_args()", argv[1:])
+    args = parser.parse_args(argv[1:])
     setup_logger(args.verbose)
 
     config = PyconsulConfig()
@@ -27,6 +29,7 @@ def parse_args():
     logger = logging.getLogger('pyconsul')
     log_config(config, logger)
 
+    return config
 
 
 def setup_logger(verbosity):
@@ -47,14 +50,17 @@ def setup_logger(verbosity):
     logger.addHandler(s)
 
 
-def main():
-    parse_args()
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv
+
+    config = parse_args(argv)
 
 def log_config(config, logger):
     logger.debug('Logging configured')
-    for k, v in config._config.items():
-        logger.debug(f"{k} = {v}")
+    logger.debug(str(config))
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv)
+
