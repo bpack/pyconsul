@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 from .config import PyconsulConfig
+from .processor import PyconsulProcessor
 
 def parse_args(argv):
     parser = argparse.ArgumentParser()
@@ -55,6 +56,9 @@ def main(argv=None):
         argv = sys.argv
 
     config = parse_args(argv)
+    processor = PyconsulProcessor(config)
+    processor.mirror()
+
 
 def log_config(config, logger):
     logger.debug('Logging configured')

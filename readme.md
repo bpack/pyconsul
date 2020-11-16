@@ -9,7 +9,7 @@ pipenv shell
 pipenv install --dev
 pipenv install -e .
 
-pipenv run pyconsul -vv
+pipenv run pyconsul -vv --dryrun --paths $PYCONSUL_TEST_PATH --token ABCDE-12345 --url http://localhost
 
 pipenv run pytest
 ```
