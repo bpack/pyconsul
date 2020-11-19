@@ -1,0 +1,3 @@
+spring:
+    datasource:
+        url: jdbc:mysql://testserver:3306/sample
