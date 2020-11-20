@@ -23,7 +23,7 @@ class PyconsulProcessor:
     def _build_list(self):
         records = []
         for path in self.config.paths:
-            records.append(self._process_path(path))
+            records.extend(self._process_path(path))
 
         return records
 
@@ -41,7 +41,7 @@ class PyconsulProcessor:
                 if key.startswith('/'):
                     key = key[1:]
 
-                logger.debug(f"Adding key = {key}, f = {filepath}")
+                logger.debug(f"Adding key = {key}, path = {filepath}")
                 records.append(PyconsulRecord(key, filepath))
 
         return records
@@ -53,10 +53,15 @@ class PyconsulProcessor:
     def mirror(self):
         all_records = self._build_list()
 
-        for block in divide_list(all_records, 64):
-            for records in block:
-                for record in records:
-                    self._add_value(record)
+        blocks = divide_list(all_records, 64)
 
-                self.client.add_records(records)
+        if len(all_records) > 64:
+            logger.info(f"Key set of {len(all_records)} will be processed in 64 key blocks.")
+
+        for block in blocks:
+            logger.debug(f"Processing block with size: {str(len(block))}")
+            for record in block:
+                self._add_value(record)
+
+            self.client.add_records(block)
 
