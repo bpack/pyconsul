@@ -26,13 +26,18 @@ class ConsulClient:
 
     def to_kv(self, record):
         kv_root = ""
-        if(self.mount_point):
+        if self.mount_point:
             kv_root = self.mount_point
+
+        key = "{}/{}".format(kv_root, record.key)
+
+        if key.startswith('/'):
+            key = key[1:]
 
         kv = {
             "KV": {
                 "Verb": "set",
-                "Key": "{}/{}".format(kv_root, record.key),
+                "Key": key,
                 "Value": "{}".format(base64.b64encode(record.contents.encode("utf-8")).decode("utf-8"))
             }
         }
@@ -55,5 +60,9 @@ class ConsulClient:
                 logger.debug(f"Request upload succeeded {response.content}")
 
             else:
-                body = json.loads(response.content)
-                logger.error(f"Request upload failed. HTTP response code {response.status_code}, {body}")
+                logger.error(f"Request upload failed. HTTP response code {response.status_code}")
+                logger.error(f"Response body: {response.content}")
+                logger.error(f"Headers: {response.headers}")
+
+                raise RuntimeError(f"Consul upload failed with status code {response.status_code}")
+

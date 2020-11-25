@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from .consul_client import ConsulClient
 from .record import PyconsulRecord
 
@@ -56,12 +57,16 @@ class PyconsulProcessor:
         blocks = divide_list(all_records, 64)
 
         if len(all_records) > 64:
-            logger.info(f"Key set of {len(all_records)} will be processed in 64 key blocks.")
+            logger.info(f"Key set of {len(all_records)} records will be processed in 64 key blocks.")
 
         for block in blocks:
             logger.debug(f"Processing block with size: {str(len(block))}")
             for record in block:
                 self._add_value(record)
 
-            self.client.add_records(block)
+            try:
+                self.client.add_records(block)
+            except:
+                logger.error("Error uploading keys. Exiting ...")
+                sys.exit(1)
 
