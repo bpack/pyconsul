@@ -4,6 +4,7 @@ defaults = {
     'dry-run': False,
     'mount-point': None,
     'paths': ['.'],
+    'skip-ssl': False,
     'token': None,
     'url': None,
     'verbosity': 2
@@ -52,6 +53,14 @@ class PyconsulConfig(Base):
         values = path_list.split(':')
         if path_list is not None:
             self.set_property('paths', values)
+
+    @property
+    def skip_ssl(self):
+        return self.get_property('skip-ssl')
+
+    @skip_ssl.setter
+    def skip_ssl(self, value):
+        self.set_property('skip-ssl', value)
 
     @property
     def url(self):

@@ -11,6 +11,7 @@ def parse_args(argv):
     parser.add_argument('-d', '--dryrun', action='store_true')
     parser.add_argument('-m', '--mountpoint')
     parser.add_argument('-p', '--paths', default='.')
+    parser.add_argument('-s', '--no-ssl-verify', action='store_true')
     parser.add_argument('-t', '--token', default=os.environ.get('CONSUL_TOKEN'))
     parser.add_argument('-u', '--url', default=os.environ.get('CONSUL_URL'))
     parser.add_argument('-v', '--verbose', action='count', default=0)
@@ -23,6 +24,7 @@ def parse_args(argv):
     config.dryrun = args.dryrun
     config.mount_point = args.mountpoint
     config.paths = args.paths
+    config.skip_ssl = args.no_ssl_verify
     config.token = args.token
     config.url = args.url
     config.verbosity = args.verbose

@@ -16,6 +16,8 @@ class ConsulClient:
 
         self.url = "{}/v1/txn".format(config.url)
 
+        self.verify = not config.skip_ssl
+
         self.headers = {
             'Content-Type': "application/json",
             'X-Consul-Token': config.token,
@@ -51,10 +53,12 @@ class ConsulClient:
 
         if self.dryrun:
             logger.info("DRY RUN - payload is \n{} with headers \n{}".format(json.dumps(kvs, indent=2), self.headers))
+            if not self.verify:
+                logger.info("DRY RUN - SSL Validation disabled.")
         else:
             logger.info("Mirroring {} keys to {}".format(len(kvs), self.url))
 
-            response = requests.request('PUT', self.url, data=json.dumps(kvs), headers=self.headers)
+            response = requests.request('PUT', self.url, data=json.dumps(kvs), headers=self.headers, verify=self.verify)
 
             if response.status_code == 200:
                 logger.debug(f"Request upload succeeded {response.content}")
@@ -64,5 +68,5 @@ class ConsulClient:
                 logger.error(f"Response body: {response.content}")
                 logger.error(f"Headers: {response.headers}")
 
-                raise RuntimeError(f"Consul upload failed with status code {response.status_code}")
+                raise RuntimeError(f"Consul PUT request failed with status code {response.status_code}")
 
