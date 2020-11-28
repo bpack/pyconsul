@@ -8,15 +8,21 @@ from .processor import PyconsulProcessor
 def parse_args(argv):
     parser = argparse.ArgumentParser()
  
-    parser.add_argument('-d', '--dryrun', action='store_true')
-    parser.add_argument('-m', '--mountpoint')
-    parser.add_argument('-p', '--paths', default='.')
-    parser.add_argument('-s', '--no-ssl-verify', action='store_true')
-    parser.add_argument('-t', '--token', default=os.environ.get('CONSUL_TOKEN'))
-    parser.add_argument('-u', '--url', default=os.environ.get('CONSUL_URL'))
-    parser.add_argument('-v', '--verbose', action='count', default=0)
+    parser.add_argument('-d', '--dryrun', action='store_true',
+            help='Logs the operations that would be performed instead of executing.')
+    parser.add_argument('-m', '--mountpoint',
+            help='Defines a top level path in Consul where keys will be written.')
+    parser.add_argument('-p', '--paths', default='.', 
+            help='The paths on the file system to copy to Consul.')
+    parser.add_argument('-s', '--no-ssl-verify', action='store_true',
+            help='Skips SSL verification of the Consul URL. Not recommended.')
+    parser.add_argument('-t', '--token', default=os.environ.get('CONSUL_TOKEN'),
+            help='The authentication token to use with Consul.')
+    parser.add_argument('-u', '--url', default=os.environ.get('CONSUL_URL'),
+            help='The base Consul URL to use.')
+    parser.add_argument('-v', '--verbose', action='count', default=0,
+            help='Controls output logging detail. -v for info, -vv for debug.')
 
-    print("In parse_args()", argv[1:])
     args = parser.parse_args(argv[1:])
     setup_logger(args.verbose)
 
