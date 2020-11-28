@@ -26,6 +26,19 @@ optional arguments:
                         debug.
 ```
 
+The token parameter can be provided with the `CONSUL_TOKEN` environment variable.
+The url can be provided with the `CONSUL_URL` environment variable.
+
+### Running with Docker
+The file-system you wish to mirror should be provided as a volume to the docker container.
+```
+docker run -v `pwd`/data:/consul/data \
+    -e CONSUL_TOKEN=$CONSUL_HTTP_TOKEN \
+    bpack/pyconsul -vv \
+    --url https://your.consul.com:8500 \
+    --paths /consul/data
+```
+
 ### Notes to Self
 Install and run locally.
 
@@ -47,8 +60,8 @@ docker exec consul consul acl bootstrap
 # capture secretID
 # export CONSUL_HTTP_TOKEN=...
 
-docker exec -e CONSUL_HTTP_TOKEN=... consul consul members
+docker exec -e CONSUL_HTTP_TOKEN=... testconsul consul members
 
-docker run -v `pwd`/test/data:/consul/data --link consul -e CONSUL_TOKEN=$CONSUL_HTTP_TOKEN bpack/pyconsul -vv --url http://consul:8500 --paths /consul/data
+docker run -v `pwd`/test/data:/consul/data --link testconsul -e CONSUL_TOKEN=$CONSUL_HTTP_TOKEN bpack/pyconsul -vv --url http://testconsul:8500 --paths /consul/data
 
 ```
