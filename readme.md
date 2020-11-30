@@ -56,7 +56,7 @@ Testing with consul locally
 ```
 make consul
 
-docker exec consul consul acl bootstrap
+docker exec testconsul consul acl bootstrap
 # capture secretID
 # export CONSUL_HTTP_TOKEN=...
 
