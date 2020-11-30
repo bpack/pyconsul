@@ -6,13 +6,15 @@ from .config import PyconsulConfig
 from .processor import PyconsulProcessor
 
 def parse_args(argv):
+    ' Parse arguments from the command line and setup logging '
+
     parser = argparse.ArgumentParser()
- 
+
     parser.add_argument('-d', '--dryrun', action='store_true',
             help='Logs the operations that would be performed instead of executing.')
     parser.add_argument('-m', '--mountpoint',
             help='Defines a top level path in Consul where keys will be written.')
-    parser.add_argument('-p', '--paths', default='.', 
+    parser.add_argument('-p', '--paths', default='.',
             help='The paths on the file system to copy to Consul.')
     parser.add_argument('-s', '--no-ssl-verify', action='store_true',
             help='Skips SSL verification of the Consul URL. Not recommended.')
@@ -42,6 +44,7 @@ def parse_args(argv):
 
 
 def setup_logger(verbosity):
+    ' Sets up console logging based on the requested verbosity level '
     log_level = {
         0: logging.WARNING,
         1: logging.INFO,
@@ -51,15 +54,16 @@ def setup_logger(verbosity):
     logger = logging.getLogger('pyconsul')
     logger.setLevel(log_level)
 
-    s = logging.StreamHandler()
-    s.setLevel(log_level)
+    handler = logging.StreamHandler()
+    handler.setLevel(log_level)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    s.setFormatter(formatter)
+    handler.setFormatter(formatter)
 
-    logger.addHandler(s)
+    logger.addHandler(handler)
 
 
 def main(argv=None):
+    ' Main entrypoint '
     if argv is None:
         argv = sys.argv
 
@@ -69,10 +73,10 @@ def main(argv=None):
 
 
 def log_config(config, logger):
+    ' Logs the keys in the configuration object if debug logging enabled '
     logger.debug('Logging configured')
     logger.debug(str(config))
 
 
 if __name__ == '__main__':
     main(sys.argv)
-

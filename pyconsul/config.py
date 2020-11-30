@@ -1,4 +1,4 @@
-import os
+' Encapsulates the overall configuration for the pyconsul operations '
 
 defaults = {
     'dry-run': False,
@@ -10,14 +10,17 @@ defaults = {
     'verbosity': 2
 }
 
-class Base(object):
+class Base:
+    ' Sets the configuration defaults and defines base get/set methods '
     def __init__(self):
         self._config = defaults
 
     def get_property(self, name):
+        ' Returns the given property name or None if not set '
         return self._config.get(name)
 
     def set_property(self, name, value):
+        ' Sets the given property name, value '
         self._config[name] = value
 
 
@@ -74,12 +77,12 @@ class PyconsulConfig(Base):
     @property
     def token(self):
         return self.get_property('token')
-    
+
     @token.setter
     def token(self, value):
         if value is not None:
             self.set_property('token', value)
-    
+
     @property
     def verbosity(self):
         return self.get_property('verbosity')
@@ -92,7 +95,6 @@ class PyconsulConfig(Base):
     def __str__(self):
         s = 'PyconsulConfig:'
         for k, v in self._config.items():
-            s += f"\n\t+ {k} = {v}" 
+            s += f"\n\t+ {k} = {v}"
 
         return s
-

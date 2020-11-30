@@ -6,6 +6,7 @@ import requests
 logger = logging.getLogger('pyconsul')
 
 class ConsulClient:
+    ' Encapsulates the use of the Consul txn API for key-value uploads '
 
     def __init__(self, config):
         self.dryrun = config.dryrun
@@ -27,6 +28,7 @@ class ConsulClient:
         }
 
     def to_kv(self, record):
+        ' Converts a record to a key-value API object '
         kv_root = ""
         if self.mount_point:
             kv_root = self.mount_point
@@ -36,37 +38,42 @@ class ConsulClient:
         if key.startswith('/'):
             key = key[1:]
 
+        value = "{}".format(base64.b64encode(record.contents.encode("utf-8")).decode("utf-8"))
         kv = {
             "KV": {
                 "Verb": "set",
                 "Key": key,
-                "Value": "{}".format(base64.b64encode(record.contents.encode("utf-8")).decode("utf-8"))
+                "Value": value
             }
         }
 
         return kv
 
     def add_records(self, records):
+        ' Adds the given records to Consul using the txn API '
         kvs = []
         for record in records:
             kvs.append(self.to_kv(record))
 
         if self.dryrun:
-            logger.info("DRY RUN - payload is \n{} with headers \n{}".format(json.dumps(kvs, indent=2), self.headers))
+            logger.info("DRY RUN - payload is \n%s with headers \n%s",
+                    json.dumps(kvs, indent=2), self.headers)
+
             if not self.verify:
                 logger.info("DRY RUN - SSL Validation disabled.")
         else:
-            logger.info("Mirroring {} keys to {}".format(len(kvs), self.url))
+            logger.info("Mirroring %s keys to %s", len(kvs), self.url)
 
-            response = requests.request('PUT', self.url, data=json.dumps(kvs), headers=self.headers, verify=self.verify)
+            response = requests.request('PUT', self.url,
+                    data=json.dumps(kvs), headers=self.headers, verify=self.verify)
 
             if response.status_code == 200:
                 logger.debug(f"Request upload succeeded {response.content}")
 
             else:
-                logger.error(f"Request upload failed. HTTP response code {response.status_code}")
-                logger.error(f"Response body: {response.content}")
-                logger.error(f"Headers: {response.headers}")
+                status = response.status_code
+                logger.error("Request upload failed. HTTP response code %s", status)
+                logger.error("Response body: %s", response.content)
+                logger.error("Headers: %s", response.headers)
 
-                raise RuntimeError(f"Consul PUT request failed with status code {response.status_code}")
-
+                raise RuntimeError(f"Consul PUT request failed with status code {status}")
